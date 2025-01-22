@@ -10,7 +10,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: username
 
     firewalls:
         dev:
@@ -25,7 +25,7 @@ security:
     access_control:
         - { path: ^/api/token, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api/admin, roles: ROLE_ADMIN }
+        - { path: ^/api/users, roles: ROLE_ADMIN }
         - { path: ^/api, roles: ROLE_USER }
 
 when@test:

@@ -1,0 +1,16 @@
+{% extends '@!NelmioApiDoc/SwaggerUi/index.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/icone.svg') }}"/>
+    <link rel="stylesheet" href="{{ asset('css/nelmio.css') }}" type="text/css" media="all" />
+{% endblock %}
+
+{% block header %}
+    <img class='logo-api' src="{{ asset('images/icone.svg') }}" alt="">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/nelmio.js') }}"></script> 
+{% endblock javascripts %}

@@ -1,0 +1,29 @@
+body {
+    margin: 0
+}
+
+header {
+    display: none;
+}
+
+#swagger-ui.api-platform .info {
+    display: flex;
+    gap: 30px;
+    margin: 20px auto;
+}
+
+.swagger-ui .info hgroup.main {
+    margin-bottom: 2px;
+}
+
+.swagger-ui .renderedMarkdown p {
+    margin: 0px;
+}
+
+#swagger-ui.api-platform .opblock-tag {
+    padding-left: 5px;
+}
+
+.logo-api {
+    width: 64px;
+}

@@ -1,11 +1,20 @@
 {
-    "doctrine/doctrine-bundle": {
-        "version": "2.13",
+    "doctrine/annotations": {
+        "version": "2.0",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.13",
-            "ref": "8d96c0b51591ffc26794d865ba3ee7d193438a83"
+            "version": "1.10",
+            "ref": "64d8583af5ea57b7afa4aba4b159907f3a148b05"
+        }
+    },
+    "doctrine/doctrine-bundle": {
+        "version": "2.10",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.10",
+            "ref": "0db4b12b5df45f5122213b4ecd18733ab7fa7d53"
         },
         "files": [
             "./config/packages/doctrine.yaml",
@@ -14,7 +23,7 @@
         ]
     },
     "doctrine/doctrine-fixtures-bundle": {
-        "version": "3.6",
+        "version": "3.4",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -26,7 +35,7 @@
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
-        "version": "3.4",
+        "version": "3.2",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -51,7 +60,7 @@
         ]
     },
     "nelmio/api-doc-bundle": {
-        "version": "4.26",
+        "version": "4.12",
         "recipe": {
             "repo": "github.com/symfony/recipes-contrib",
             "branch": "main",
@@ -60,12 +69,12 @@
         }
     },
     "symfony/console": {
-        "version": "7.2",
+        "version": "6.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "5.3",
-            "ref": "1781ff40d8a17d87cf53f8d4cf0c8346ed2bb461"
+            "ref": "da0c8be8157600ad34f10ff0c9cc91232522e047"
         },
         "files": [
             "./bin/console"
@@ -76,21 +85,20 @@
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.4",
-            "ref": "52e9754527a15e2b79d9a610f98185a1fe46622a"
+            "version": "1.0",
+            "ref": "146251ae39e06a95be0fe3d13c807bcf3938b172"
         },
         "files": [
-            "./.env",
-            "./.env.dev"
+            "./.env"
         ]
     },
     "symfony/framework-bundle": {
-        "version": "7.2",
+        "version": "6.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "7.2",
-            "ref": "87bcf6f7c55201f345d8895deda46d2adbdbaa89"
+            "version": "6.2",
+            "ref": "af47254c5e4cd543e6af3e4508298ffebbdaddd3"
         },
         "files": [
             "./config/packages/cache.yaml",
@@ -104,7 +112,7 @@
         ]
     },
     "symfony/maker-bundle": {
-        "version": "1.62",
+        "version": "1.51",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -113,12 +121,12 @@
         }
     },
     "symfony/routing": {
-        "version": "7.2",
+        "version": "6.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "7.0",
-            "ref": "21b72649d5622d8f7da329ffb5afb232a023619d"
+            "version": "6.2",
+            "ref": "e0a11b4ccb8c9e70b574ff5ad3dfdcd41dec5aa6"
         },
         "files": [
             "./config/packages/routing.yaml",
@@ -126,16 +134,15 @@
         ]
     },
     "symfony/security-bundle": {
-        "version": "7.2",
+        "version": "6.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "6.4",
-            "ref": "2ae08430db28c8eb4476605894296c82a642028f"
+            "version": "6.0",
+            "ref": "8a5b112826f7d3d5b07027f93786ae11a1c7de48"
         },
         "files": [
-            "./config/packages/security.yaml",
-            "./config/routes/security.yaml"
+            "./config/packages/security.yaml"
         ]
     },
     "symfony/twig-bundle": {
@@ -152,6 +159,6 @@
         ]
     },
     "twig/extra-bundle": {
-        "version": "v3.8.0"
+        "version": "v3.7.1"
     }
 }

@@ -1,9 +1,5 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
-
+## Requires the Asset component and the Twig bundle
+## $ composer require twig asset
 app.swagger_ui:
     path: /api/doc
     methods: GET
