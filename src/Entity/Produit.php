@@ -29,6 +29,9 @@ class Produit
     #[ORM\JoinColumn(nullable: false)]
     private ?SectionProduit $sectionProduit = null;
 
+    #[ORM\Column]
+    private ?bool $selected = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class Produit
     public function setSectionProduit(?SectionProduit $sectionProduit): static
     {
         $this->sectionProduit = $sectionProduit;
+
+        return $this;
+    }
+
+    public function isSelected(): ?bool
+    {
+        return $this->selected;
+    }
+
+    public function setSelected(bool $selected): static
+    {
+        $this->selected = $selected;
 
         return $this;
     }
