@@ -16,17 +16,17 @@ class ProduitController extends AbstractController{
         $this->doctrine = $doctrine;
     }
 
-    #[Route('/produits', methods: ['GET'])]
+    #[Route('/api/produits', methods: ['GET'])]
     #[Security(name: null)]
-    #[OA\Get(description: 'recupere tout les produits')]
+    #[OA\Get(description: 'Récupère tous les produits')]
     #[OA\Response(
         response: 200,
-        description: 'recupere tout les produits'
+        description: 'Retourne la liste des produits'
     )]
     #[OA\Tag(name: 'produits')]
     public function getData() {
         $entityManager = $this->doctrine->getManager();
-        $pompier = $entityManager->getRepository(Produit::class)->find(1);
-        return new Response($pompier->getPrenom());
+        $data = $entityManager->getRepository(Produit::class)->findAll();
+        return new Response($this->json($data));
     }
 }
