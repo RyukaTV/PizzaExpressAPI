@@ -20,13 +20,15 @@ use OpenApi\Attributes as OA;
 use App\Service\JsonConverter;
 use App\Entity\User;
 
-class UserController extends AbstractController {
+class UserController extends AbstractController
+{
 
     private $jsonConverter;
     private $passwordHasher;
     private $doctrine;
 
-    public  function __construct(JsonConverter $jsonConverter, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine) {
+    public  function __construct(JsonConverter $jsonConverter, UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine)
+    {
         $this->passwordHasher = $passwordHasher;
         $this->jsonConverter = $jsonConverter;
         $this->doctrine = $doctrine;
@@ -50,7 +52,8 @@ class UserController extends AbstractController {
         )
     )]
     #[OA\Tag(name: 'utilisateurs')]
-    public function logUser(JWTTokenManagerInterface $JWTManager) {
+    public function logUser(JWTTokenManagerInterface $JWTManager)
+    {
         $request = Request::createFromGlobals();
         $data = json_decode($request->getContent(), true);
 
@@ -80,7 +83,8 @@ class UserController extends AbstractController {
         content: new OA\JsonContent(ref: new Model(type: User::class))
     )]
     #[OA\Tag(name: 'utilisateurs')]
-    public function getUtilisateur(JWTEncoderInterface $jwtEncoder, Request $request) {
+    public function getUtilisateur(JWTEncoderInterface $jwtEncoder, Request $request)
+    {
         $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization'));
 
         $userToken = $jwtEncoder->decode($tokenString);
@@ -91,7 +95,7 @@ class UserController extends AbstractController {
             return new Response('Aucun utilisateur ne correspond à ce token', 404);
         }
 
-        return new Response($this->jsonConverter->encodeToJson($userDatabase));
+        return new Response($this->jsonConverter->encodeToJson($userDatabase->serialize()));
     }
 
     #[Route('/api/users/changeEmail', methods: ['POST'])]
@@ -111,7 +115,8 @@ class UserController extends AbstractController {
         )
     )]
     #[OA\Tag(name: 'utilisateurs')]
-    public function ChangeUserEmail(JWTTokenManagerInterface $JWTManager, JWTEncoderInterface $jwtEncoder, Request $request){
+    public function ChangeUserEmail(JWTTokenManagerInterface $JWTManager, JWTEncoderInterface $jwtEncoder, Request $request)
+    {
         $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization'));
         $userToken = $jwtEncoder->decode($tokenString);
         $data = json_decode($request->getContent(), true);
@@ -119,7 +124,7 @@ class UserController extends AbstractController {
         if (!is_array($data) || $data == null || empty($data['email'])) {
             return new Response('Bad Request', 400);
         }
-        
+
         $entityManager = $this->doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $userToken['email']]);
 
@@ -129,7 +134,7 @@ class UserController extends AbstractController {
             $entityManager->flush();
         }
         $token = $JWTManager->create($user);
-        return new JsonResponse(['token' => $token, 'user' => $this->jsonConverter->encodeToJson($user)]);
+        return new JsonResponse(['token' => $token, 'user' => $this->jsonConverter->encodeToJson($user->serialize())]);
     }
 
     #[Route('/api/users/changeName', methods: ['POST'])]
@@ -149,7 +154,8 @@ class UserController extends AbstractController {
         )
     )]
     #[OA\Tag(name: 'utilisateurs')]
-    public function ChangeUserName(JWTTokenManagerInterface $JWTManager, JWTEncoderInterface $jwtEncoder, Request $request){
+    public function ChangeUserName(JWTTokenManagerInterface $JWTManager, JWTEncoderInterface $jwtEncoder, Request $request)
+    {
         $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization'));
         $userToken = $jwtEncoder->decode($tokenString);
         $data = json_decode($request->getContent(), true);
@@ -157,7 +163,7 @@ class UserController extends AbstractController {
         if (!is_array($data) || $data == null || empty($data['prenom'])) {
             return new Response('Bad Request', 400);
         }
-        
+
         $entityManager = $this->doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $userToken['email']]);
 
@@ -167,6 +173,46 @@ class UserController extends AbstractController {
             $entityManager->flush();
         }
         $token = $JWTManager->create($user);
-        return new JsonResponse(['token' => $token, 'user' => $this->jsonConverter->encodeToJson($user)]);
+        return new JsonResponse(['token' => $token, 'user' => $this->jsonConverter->encodeToJson($user->serialize())]);
+    }
+
+    #[Route('/api/users/changePassword', methods: ['POST'])]
+    #[OA\Post(description: 'Retourne l\'utilisateur modifé authentifié')]
+    #[OA\Response(
+        response: 201,
+        description: 'L\'utilisateur avec ses informations modifiés',
+        content: new OA\JsonContent(ref: new Model(type: User::class))
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'password', type: 'string', default: 'password'),
+                new OA\Property(property: 'repassword', type: 'string', default: 'repassword')
+            ]
+        )
+    )]
+    #[OA\Tag(name: 'utilisateurs')]
+    public function ChangeUserPassword(JWTTokenManagerInterface $JWTManager, JWTEncoderInterface $jwtEncoder, Request $request)
+    {
+        $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization'));
+        $userToken = $jwtEncoder->decode($tokenString);
+        $data = json_decode($request->getContent(), true);
+
+        if (!is_array($data) || $data == null || empty($data['password']) || empty($data['repassword'])) {
+            return new Response('Bad Request', 400);
+        }
+
+        $entityManager = $this->doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $userToken['email']]);
+
+        if ($user && $data["password"] == $data["repassword"]) {
+            $user->setPassword($this->passwordHasher->hashPassword($user, $data["password"]));
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+        $token = $JWTManager->create($user);
+        return new JsonResponse(['token' => $token, 'user' => $this->jsonConverter->encodeToJson($user->serialize())]);
     }
 }
