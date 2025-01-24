@@ -111,7 +111,7 @@ class UserController extends AbstractController {
         )
     )]
     #[OA\Tag(name: 'utilisateurs')]
-    public function ChangeUserEmail(JWTEncoderInterface $jwtEncoder, Request $request){
+    public function ChangeUserEmail(JWTTokenManagerInterface $JWTManager, JWTEncoderInterface $jwtEncoder, Request $request){
         $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization'));
         $userToken = $jwtEncoder->decode($tokenString);
         $data = json_decode($request->getContent(), true);
@@ -128,7 +128,45 @@ class UserController extends AbstractController {
             $entityManager->persist($user);
             $entityManager->flush();
         }
-        return new Response($this->jsonConverter->encodeToJson($user));
+        $token = $JWTManager->create($user);
+        return new JsonResponse(['token' => $token, 'user' => $this->jsonConverter->encodeToJson($user)]);
+    }
 
+    #[Route('/api/users/changeName', methods: ['POST'])]
+    #[OA\Post(description: 'Retourne l\'utilisateur modifé authentifié')]
+    #[OA\Response(
+        response: 201,
+        description: 'L\'utilisateur avec ses informations modifiés',
+        content: new OA\JsonContent(ref: new Model(type: User::class))
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'prenom', type: 'string', default: 'username')
+            ]
+        )
+    )]
+    #[OA\Tag(name: 'utilisateurs')]
+    public function ChangeUserName(JWTTokenManagerInterface $JWTManager, JWTEncoderInterface $jwtEncoder, Request $request){
+        $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization'));
+        $userToken = $jwtEncoder->decode($tokenString);
+        $data = json_decode($request->getContent(), true);
+
+        if (!is_array($data) || $data == null || empty($data['prenom'])) {
+            return new Response('Bad Request', 400);
+        }
+        
+        $entityManager = $this->doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $userToken['email']]);
+
+        if ($user) {
+            $user->setUsername($data["prenom"]);
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+        $token = $JWTManager->create($user);
+        return new JsonResponse(['token' => $token, 'user' => $this->jsonConverter->encodeToJson($user)]);
     }
 }
