@@ -93,4 +93,42 @@ class UserController extends AbstractController {
 
         return new Response($this->jsonConverter->encodeToJson($userDatabase));
     }
+
+    #[Route('/api/users/changeEmail', methods: ['POST'])]
+    #[OA\Post(description: 'Retourne l\'utilisateur modifé authentifié')]
+    #[OA\Response(
+        response: 201,
+        description: 'L\'utilisateur avec ses informations modifiés',
+        content: new OA\JsonContent(ref: new Model(type: User::class))
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'email', type: 'string', default: 'admin@admin.fr')
+            ]
+        )
+    )]
+    #[OA\Tag(name: 'utilisateurs')]
+    public function ChangeUserEmail(JWTEncoderInterface $jwtEncoder, Request $request){
+        $tokenString = str_replace('Bearer ', '', $request->headers->get('Authorization'));
+        $userToken = $jwtEncoder->decode($tokenString);
+        $data = json_decode($request->getContent(), true);
+
+        if (!is_array($data) || $data == null || empty($data['email'])) {
+            return new Response('Bad Request', 400);
+        }
+        
+        $entityManager = $this->doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $userToken['email']]);
+
+        if ($user) {
+            $user->setEmail($data["email"]);
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+        return new Response($this->jsonConverter->encodeToJson($user));
+
+    }
 }
