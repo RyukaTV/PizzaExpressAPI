@@ -23,8 +23,10 @@ security:
             jwt: ~
 
     access_control:
-        - { path: ^/api, roles: PUBLIC_ACCESS }
-        - { path: ^/api/admin, roles: ROLE_ADMIN }
+    - { path: ^/api/sectionProduits, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
+    - { path: ^/api/admin, roles: ROLE_ADMIN }
+    - { path: ^/api, roles: PUBLIC_ACCESS }
+
 
 when@test:
     security:

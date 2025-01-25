@@ -26,7 +26,7 @@ class Produit
     private ?float $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?SectionProduit $sectionProduit = null;
 
     #[ORM\Column]
