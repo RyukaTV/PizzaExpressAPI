@@ -37,7 +37,7 @@ class SectionProduitController extends AbstractController
         return new Response($this->jsonConverter->encodeToJson($data));
     }
 
-    #[Route('/api/sectionProduits/selected', methods: ['GET'])]
+    #[Route('/api/sectionProduits/produits/selected', methods: ['GET'])]
     #[Security(name: null)]
     #[OA\Get(description: 'Récupère tous les produits sélectionnés')]
     #[OA\Response(
