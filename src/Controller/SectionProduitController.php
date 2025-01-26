@@ -184,9 +184,6 @@ class SectionProduitController extends AbstractController
                 $entityManager->flush();
             }
         }
-
-       
-
-        return new JsonResponse(["message" => "Produit selected sucessfully updated ", "data" => $data]);
+        return new Response("Produit selected sucessfully updated");
     }
 }
