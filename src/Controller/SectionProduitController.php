@@ -12,6 +12,7 @@ use App\Entity\SectionProduit;
 use App\Entity\Produit;
 use App\Service\JsonConverter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SectionProduitController extends AbstractController
 {
@@ -141,5 +142,51 @@ class SectionProduitController extends AbstractController
         }
 
         return new Response("Section Produit sucessfully deleted");
+    }
+
+    #[Route('/api/sectionProduits/{sectionId}/produits/{id}/selected', methods: ['PUT'])]
+    #[OA\Put(description: 'modifie un produit selectioné')]
+    #[OA\Response(
+        response: 201,
+        description: 'modifie un produit selectioné'
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'selectedValue', type: 'boolean', default: 'false')
+            ]
+        )
+    )]
+    #[OA\Tag(name: 'SectionProduit')]
+    public function updateSelectedTagProduit(ManagerRegistry $doctrine, Request $request, $sectionId, $id)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!is_array($data) || $data === null || !array_key_exists('selectedValue', $data)) {
+            return new Response('Bad Request: Invalid payload', 400);
+        }
+        $data['selectedValue'] = filter_var($data['selectedValue'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        
+        if ($data['selectedValue'] === null) {
+            return new Response('Bad Request: selectedValue must be a boolean', 400);
+        }
+
+        $entityManager = $doctrine->getManager();
+        $section= $entityManager->getRepository(SectionProduit::class)->find($sectionId);
+        if ($section) {
+            $produit = $entityManager->getRepository(Produit::class)->findOneBy(["sectionProduit" => $section, "id"=> $id]);
+
+            if ($produit) {
+                $produit->setSelected($data['selectedValue']);
+                $entityManager->persist($produit);
+                $entityManager->flush();
+            }
+        }
+
+       
+
+        return new JsonResponse(["message" => "Produit selected sucessfully updated ", "data" => $data]);
     }
 }
